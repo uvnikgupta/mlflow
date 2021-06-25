@@ -20,6 +20,12 @@
   <code>mlflow ui --backend-store-uri  %MLFLOW_TRACKING_URI%</code><br>
   OR<br>
   <code>mlflow server --backend-store-uri  %MLFLOW_TRACKING_URI% --default-artifact-root %MLFLOW_ARTIFACT_STORE%</code><br>
+
+### Run the code
+1. Clone this get repo
+2. Download Kaggle Credit card fraud dataset from https://www.kaggle.com/mlg-ulb/creditcardfraud and put it under <code>./datasets</code>
+3. Run the mlflow_sk for sklearn LogisticRegression Model
+4. Run the mlflow_tf for MNIST dataset using Tensorflow
 	
 ### Serve ML model
   <code>mlflow models serve --model-uri models:/REGISTERED_MODEL_NAME/MODEL_VERSION -p PORT</code>
