@@ -15,6 +15,11 @@
 6. Optional : <br>
 	 <ul><li>Install pgAdmin and connect to the postgres server running in the container</li><ul>
 
+### MLFlow UI
+  <code>mlflow ui --backend-store-uri  %MLFLOW_TRACKING_URI%</code><br>
+  OR<br>
+  <code>mlflow server --backend-store-uri  %MLFLOW_TRACKING_URI% --default-artifact-root %MLFLOW_ARTIFACT_STORE%</code><br>
+	
 ### Serve ML model
   <code>mlflow models serve --model-uri models:/REGISTERED_MODEL_NAME/MODEL_VERSION -p PORT</code>
   
@@ -22,9 +27,4 @@
 1. Set the following environment variables: <br>
 		<code>MLFLOW_TRACKING_URI=sqlite:///[Path/to/sqlite db file]</code><br>
 		<code>MLFLOW_ARTIFACT_STORE=file:/[Path/to/local/folder]</code><br>
-  
-### MLFlow UI
-  <code>mlflow ui --backend-store-uri  %MLFLOW_TRACKING_URI%</code><br>
-  OR<br>
-  <code>mlflow server --backend-store-uri  %MLFLOW_TRACKING_URI% --default-artifact-root %MLFLOW_ARTIFACT_STORE%</code><br>
 
