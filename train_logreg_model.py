@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 class ModelTrainer():
     def __init__(self, x_train, y_train) -> None:
         self.x_train, self.y_train = x_train, y_train
-        self.anomaly_weights = [1, 5, 10, 15]
+        self.anomaly_weights = [5, 10]
         self.kfold = KFold(n_splits=5, shuffle=True, random_state=42)
     
     def train(self):
