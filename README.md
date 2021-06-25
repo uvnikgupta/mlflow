@@ -7,13 +7,14 @@
   The above will start the containers with ephemeral storage. To start them with persistent volume, use the -v option with docker run command:<br>
 		<code>docker run -d --rm -p 9000:9000 -v [local path]:/data--name minio minio/minio server /data</code><br>
 		<ul><li>Running the postgres container with persistent volume on windows is a bit more involved and needs a docker compose file. The container path that needs to be mounted is <code>/var/lib/postgresql/data</code></li></ul>
-6. Set the following environment variables:
-		<code>MLFLOW_TRACKING_URI=postgresql+psycopg2://postgres:password@localhost:5432/mlflow</code><br>
+6. Logon to minio UI (http://localhost:9000) and add a bucket named <code>mlruns</code>
+7. Set the following environment variables:
+		<code>MLFLOW_TRACKING_URI=postgresql+psycopg2://postgres:password@localhost:5432</code><br>
 		<code>MLFLOW_ARTIFACT_STORE=s3://mlruns</code><br>
 		<code>AWS_ACCESS_KEY_ID=minioadmin</code><br>
 		<code>AWS_SECRET_ACCESS_KEY=minioadmin</code><br>
 		<code>MLFLOW_S3_ENDPOINT_URL=http://127.0.0.1:9000</code><br>
-7. Optional : <br>
+8. Optional : <br>
 	 <ul><li>Install pgAdmin and connect to the postgres server running in the container</li><ul>
 
 ### MLFlow UI
