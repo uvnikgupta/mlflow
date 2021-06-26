@@ -61,5 +61,16 @@
 7. Run <code>mlflow models serve --model-uri models:/logreg/Staging -p 1235</code> to start serving the model
 8. Change the port in <code>mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
 
-## Further trials
+### Further trials
 1. Try to serve the Tensorflow model for MNIST dataset in mlflow_tf.ipynb
+
+# Issues with MLFlow
+### Model Serving
+1. It seems there is no way to have a data transformation pipeline during model prediction. For eg it is not possible to load a fitted StandardScaler and transform the incoming data before passing it over for prediction. Even if there is some way which I am not aware of it will be very involved requiring deep knowledge of the MLFlow APIs.
+2. The batch size that the serving model can accept seems to be very small. For eg with the credit card prediction example, a maximum batch size of 80 is allowed. Goiing beyond that results in error. So a large set of data needs to be send in very small batches for prediction. This has a huge negative impact on the performance.
+3. I do not know how does the model serving scale with load when it is deployed on a, for eg. kubernetes cluster
+
+:boom:All the above issues make MLFlow practically a **NO GO**:point_left: solution.:hurtrealbad:
+### Model Training
+1. It is possible to create replicable training pipeline flows using MLFlow Projects but this requires one to learn the MLflow Project DSL and also a good knowledge of MLFlow APIs to write the code. For eg, refer https://github.com/mlflow/mlflow/tree/master/examples/multistep_workflow
+ 
