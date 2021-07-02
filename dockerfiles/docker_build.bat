@@ -1,2 +1,4 @@
-docker build -t mlflow_sk -f Dockerfile.logreg_serving .
-docker build -t mlflow_server -f Dockerfile.mlflow_server .
+docker build -t mlflow_server -f Dockerfile.mlflow.server .
+docker build -t mlflow_logreg_infer -f Dockerfile.logreg.inference .
+docker build -t mlflow_simplpipe_linreg_infer -f Dockerfile.simplepipe.inference .
+docker build -t mlflow_advpipe_linreg_infer --build-arg USER=%PACKAGR_USER% --build-arg PASS=%PACKAGR_PASS% -f Dockerfile.advancedpipe.inference .

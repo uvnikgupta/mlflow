@@ -1,0 +1,11 @@
+FROM python:3.8
+RUN pip install -U dvc[s3]
+
+ENV AWS_ACCESS_KEY_ID minioadmin
+ENV AWS_SECRET_ACCESS_KEY minioadmin
+ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
+
+CMD ["sh", "-c", "dvc remote add --global -d source_data s3://sourcedata \
+                && dvc remote add --global -d train_data s3://traindata \
+                && dvc remote add --global -d test_data s3://testdata \
+                && sleep 3600"]
