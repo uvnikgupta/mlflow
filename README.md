@@ -30,7 +30,7 @@
 6. Logon to MLFlow UI using http://localhost:5000
 7. Run the <code>mlflow_sk.pynb</code> for sklearn LogisticRegression Model
 8. Use the MLFlow UI to register one of the models as "logreg" and promote it to "Staging"
-9. <code>docker run -d --rm -p 1235:1235 --name mlflow_sk mlflow_sk</code> to start model serving<br>
+9. <code>docker run -d --rm -p 1235:1235 --name mlflow_logreg_infer mlflow_logreg_infer</code> to start model serving<br>
 10. Change the port in <code>mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
 
 ### Kubernetes environment
