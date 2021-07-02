@@ -64,11 +64,18 @@
 ### Further trials
 1. Try to serve the Tensorflow model for MNIST dataset in mlflow_tf.ipynb
 
+# What I liked about MLFlow
+1. Trivial setup
+2. Intuitive server UI
+3. Minimal code instrumentation for simple tasks like logging params, metrics, models and data
+4. Trivial to serve a new version of the model --> Just promote the new version from the UI or using the API
+5. Integration with Git
+
 # Issues with MLFlow
 ### Model Serving
-1. It seems there is no way to have a data transformation pipeline during model prediction. For eg it is not possible to load a fitted StandardScaler and transform the incoming data before passing it over for prediction. Even if there is some way which I am not aware of it will be very involved requiring deep knowledge of the MLFlow APIs.
-2. The batch size that the serving model can accept seems to be very small. For eg with the credit card prediction example, a maximum batch size of 80 is allowed. Goiing beyond that results in error. So a large set of data needs to be send in very small batches for prediction. This has a huge negative impact on the performance.
-3. I do not know how does the model serving scale with load when it is deployed on a, for eg. kubernetes cluster
+1. The batch size that the serving model can accept seems to be very small. For eg with the credit card prediction example, a maximum batch size of 80 is allowed. Goiing beyond that results in error. So a large set of data needs to be send in very small batches for prediction. This has a huge negative impact on the performance.
+2. I do not know how does the model serving scale with load when it is deployed on, for eg., a kubernetes cluster
+3. Community edition does not have any user managment and security feature
 
 :boom:All the above issues make MLFlow practically a **NO GO**:point_left: solution.:hurtrealbad:
 ### Model Training
