@@ -1,0 +1,16 @@
+1.  Start postgres pod
+2.  Start minio pod
+	logon to minio @ localhost:30009 and create a bucket named mlruns
+3.  Start mlflow server pod
+	logon to mlflow server @ localhost:30005 and delete the default experiment
+4.  Start mltoolkit pod
+	logon to the jupyter notebook hosted by mltoolkit pod @ localhost:30008
+	execute the notebook
+	from the mlflow server check the data path and other parameters
+	from the mlflow server register the model as linreg and promote it to staging
+5.  Start the mlflow linreg serving pod
+6.  Open the pipeline_serving notebook and execute it to get the inference from the serving pod
+7.  In the mltoolkit jupyter notebook change the data version to 2 and execute the notebook
+8.  In the mlflow server UI observe the new run
+9.  Restart the mlflow linreg serving pod
+10. Execute the inference code in pipeline serving notebook and notice the difference in rmse value
