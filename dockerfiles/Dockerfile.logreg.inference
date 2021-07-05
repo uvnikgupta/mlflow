@@ -1,9 +1,10 @@
-FROM python:3.8
-RUN pip install -U mlflow \
-    && pip install cloudpickle==1.5.0 \
-    && pip install scikit-learn==0.24.2 \
-    && pip install psycopg2 \
-    && pip install boto3
+FROM python:3.9.5-slim
+RUN pip install -U --no-cache-dir  mlflow \
+    && pip install -U --no-cache-dir cloudpickle==1.5.0 \
+    && pip install -U --no-cache-dir scikit-learn==0.24.2 \
+    && pip install -U --no-cache-dir psycopg2-binary \
+    && pip install -U --no-cache-dir boto3 \
+    && pip install -U --no-cache-dir joblib==0.15.1
 
 ENV AWS_ACCESS_KEY_ID minioadmin
 ENV AWS_SECRET_ACCESS_KEY minioadmin

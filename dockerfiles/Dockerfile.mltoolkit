@@ -1,0 +1,60 @@
+FROM python:3.9.5-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && apt-get purge -y --auto-remove \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -U --no-cache-dir jupyter \
+    && pip install -U --no-cache-dir dvc[s3] \
+    && pip install -U --no-cache-dir mlflow \
+    && pip install -U --no-cache-dir psycopg2-binary \
+    && pip install -U --no-cache-dir boto3 \
+    && pip install -U --no-cache-dir scikit-learn==0.24.2 \
+    && pip install -U --no-cache-dir matplotlib \
+    && pip install -U --no-cache-dir joblib==0.15.1 \
+    && pip uninstall -y cloudpickle \
+    && pip install --no-cache-dir cloudpickle==1.5.0 \
+    && pip install -U --no-cache-dir seaborn
+
+RUN mkdir -p /home/uvnik
+RUN useradd uvnik && chown uvnik:uvnik /home/uvnik
+USER uvnik
+
+ENV AWS_ACCESS_KEY_ID minioadmin
+ENV AWS_SECRET_ACCESS_KEY minioadmin
+ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
+ENV MLFLOW_TRACKING_URI postgresql+psycopg2://postgres:password@172.17.0.2:5432
+ENV MLFLOW_ARTIFACT_STORE s3://mlruns
+
+RUN mkdir -p /home/uvnik/work/notebooks && mkdir -p /home/uvnik/work/dataset
+COPY notebooks/*.* /home/uvnik/work/notebooks/
+COPY notebooks/dataset/* /home/uvnik/work/dataset/
+WORKDIR /home/uvnik/work
+
+ENV PORT 8000
+EXPOSE ${PORT}
+CMD ["/bin/sh", "-c", "git init \
+                    && git config --global user.email 'you@example.com' \
+                    && git config --global user.name 'Your name' \
+                    && echo 'notebooks/' > .gitignore \
+                    && git add .gitignore \
+                    && dvc init \
+                    && git commit -m 'initialize repo' \
+                    && dvc remote add -d traindata /tmp/dvcdata \
+                    && git commit .dvc/config -m 'configure dvc remote storage' \
+                    && dvc add dataset/housing.csv \
+                    && git add dataset/housing.csv.dvc dataset/.gitignore \
+                    && git commit -m 'data : track' \
+                    && git tag -a 'v1' -m 'raw data' \
+                    && dvc push \
+                    && rm -fr dataset/housing.csv \
+                    && rm -fr .dvc/cache/ \
+                    && dvc pull \
+                    && sed -i '2,1001d' dataset/housing.csv \
+                    && dvc add dataset/housing.csv \
+                    && git add dataset/housing.csv.dvc \
+                    && git commit -m 'data : remove first 1000 lines' \
+                    && git tag -a 'v2' -m 'removed 1000 lines' \
+                    && dvc push \
+                    && jupyter-notebook --ip='*' --port=${PORT} --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
