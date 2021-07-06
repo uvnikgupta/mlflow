@@ -41,7 +41,10 @@ CMD ["/bin/sh", "-c", "git init \
                     && git add .gitignore \
                     && dvc init \
                     && git commit -m 'initialize repo' \
-                    && dvc remote add -d traindata /tmp/dvcdata \
+                    && dvc remote add -d train s3://traindata \
+                    && dvc remote modify train endpointurl ${MLFLOW_S3_ENDPOINT_URL} \
+                    && dvc remote modify train access_key_id ${AWS_ACCESS_KEY_ID} \
+                    && dvc remote modify train secret_access_key ${AWS_SECRET_ACCESS_KEY} \
                     && git commit .dvc/config -m 'configure dvc remote storage' \
                     && dvc add dataset/housing.csv \
                     && git add dataset/housing.csv.dvc dataset/.gitignore \
