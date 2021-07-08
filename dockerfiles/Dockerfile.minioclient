@@ -1,0 +1,12 @@
+FROM python:3.9.5-slim-buster
+
+RUN pip install -U --no-cache-dir minio
+
+ENV AWS_ACCESS_KEY_ID minioadmin
+ENV AWS_SECRET_ACCESS_KEY minioadmin
+ENV MLFLOW_URL_FOR_CLIENT 172.17.0.4:9000
+
+RUN mkdir -p /usr/scripts
+COPY scripts/minio_client.py /usr/scripts/
+WORKDIR /usr/scripts/
+CMD [ "/bin/sh", "-c", "python minio_client.py" ]

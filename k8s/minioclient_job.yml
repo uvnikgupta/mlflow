@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minioclient
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: minioclient
+        image: minioclient
+        imagePullPolicy: Never
+        env:
+          - name: AWS_ACCESS_KEY_ID 
+            value: minioadmin
+          - name: AWS_SECRET_ACCESS_KEY 
+            value: minioadmin
+          - name: MLFLOW_URL_FOR_CLIENT 
+            value: minio:9000
+      restartPolicy: Never
