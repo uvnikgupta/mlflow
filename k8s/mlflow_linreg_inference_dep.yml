@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: mlflow-ligreg-infer
-        image: mlflow_advpipe_linreg_infer
+        image: mlflow_linreg_infer
         imagePullPolicy: Never
         env:
           - name: AWS_ACCESS_KEY_ID 

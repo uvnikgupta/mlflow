@@ -12,6 +12,7 @@ RUN pip install -U --no-cache-dir jupyter \
     && pip install -U --no-cache-dir boto3 \
     && pip install -U --no-cache-dir scikit-learn==0.24.2 \
     && pip install -U --no-cache-dir matplotlib \
+    && pip install --no-cache-dir tensorflow==2.5.0 \
     && pip install -U --no-cache-dir joblib==0.15.1 \
     && pip uninstall -y cloudpickle \
     && pip install --no-cache-dir cloudpickle==1.5.0 \
