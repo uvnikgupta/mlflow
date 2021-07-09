@@ -28,8 +28,11 @@ ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
 ENV MLFLOW_TRACKING_URI postgresql+psycopg2://postgres:password@172.17.0.2:5432
 ENV MLFLOW_ARTIFACT_STORE s3://mlruns
 
-RUN mkdir -p /home/uvnik/work/notebooks && mkdir -p /home/uvnik/work/dataset
+RUN mkdir -p /home/uvnik/work/notebooks \
+    && mkdir -p /home/uvnik/work/notebooks/custom_data_transformers \
+    && mkdir -p /home/uvnik/work/dataset
 COPY notebooks/*.* /home/uvnik/work/notebooks/
+COPY notebooks/custom_data_transformers/*.* /home/uvnik/work/notebooks/custom_data_transformers
 COPY notebooks/dataset/* /home/uvnik/work/dataset/
 WORKDIR /home/uvnik/work
 

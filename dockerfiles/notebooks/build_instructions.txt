@@ -1,0 +1,8 @@
+pip install wheel
+python setup.py bdist_wheel
+
+pip install dist/*
+
+## Upload to a repo, for eg app.packagr.app
+pip install twine
+twine upload --repository-url <your repo url> dist/*
