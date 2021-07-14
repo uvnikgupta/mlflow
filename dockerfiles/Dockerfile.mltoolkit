@@ -1,26 +1,22 @@
-FROM python:3.9.5-slim
+FROM jupyter/pyspark-notebook:ubuntu-20.04
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
-    && apt-get purge -y --auto-remove \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update \
+#    && apt-get install -y --no-install-recommends git \
+#    && apt-get purge -y --auto-remove \
+#    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install -U --no-cache-dir jupyter \
-    && pip install -U --no-cache-dir dvc[s3] \
+RUN pip install -U --no-cache-dir dvc[s3] \
     && pip install -U --no-cache-dir mlflow \
     && pip install -U --no-cache-dir psycopg2-binary \
     && pip install -U --no-cache-dir boto3 \
     && pip install -U --no-cache-dir scikit-learn==0.24.2 \
-    && pip install -U --no-cache-dir matplotlib \
     && pip install --no-cache-dir tensorflow==2.5.0 \
     && pip install -U --no-cache-dir joblib==0.15.1 \
-    && pip uninstall -y cloudpickle \
-    && pip install --no-cache-dir cloudpickle==1.5.0 \
-    && pip install -U --no-cache-dir seaborn
+    && pip install --no-cache-dir pyspark-stubs black blackcellmagic
 
-RUN mkdir -p /home/uvnik
-RUN useradd uvnik && chown uvnik:uvnik /home/uvnik
-USER uvnik
+#RUN mkdir -p /home/jovyan
+#RUN useradd jovyan && chown jovyan:jovyan /home/jovyan
+#USER jovyan
 
 ENV AWS_ACCESS_KEY_ID minioadmin
 ENV AWS_SECRET_ACCESS_KEY minioadmin
@@ -28,13 +24,13 @@ ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
 ENV MLFLOW_TRACKING_URI postgresql+psycopg2://postgres:password@172.17.0.2:5432
 ENV MLFLOW_ARTIFACT_STORE s3://mlruns
 
-RUN mkdir -p /home/uvnik/work/notebooks \
-    && mkdir -p /home/uvnik/work/notebooks/custom_data_transformers \
-    && mkdir -p /home/uvnik/work/dataset
-COPY notebooks/*.* /home/uvnik/work/notebooks/
-COPY notebooks/custom_data_transformers/*.* /home/uvnik/work/notebooks/custom_data_transformers
-COPY notebooks/dataset/* /home/uvnik/work/dataset/
-WORKDIR /home/uvnik/work
+RUN mkdir -p /home/jovyan/work/notebooks \
+    && mkdir -p /home/jovyan/work/notebooks/custom_data_transformers \
+    && mkdir -p /home/jovyan/work/dataset
+COPY notebooks/*.ipynb /home/jovyan/work/notebooks/
+COPY notebooks/custom_data_transformers/*.* /home/jovyan/work/notebooks/custom_data_transformers
+COPY notebooks/dataset/* /home/jovyan/work/dataset/
+WORKDIR /home/jovyan/work
 
 ENV PORT 8000
 EXPOSE ${PORT}
