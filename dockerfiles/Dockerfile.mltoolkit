@@ -14,6 +14,8 @@ RUN pip install -U --no-cache-dir dvc[s3] \
     && pip install -U --no-cache-dir joblib==0.15.1 \
     && pip install --no-cache-dir pyspark-stubs black blackcellmagic
 
+RUN pip install -U --no-cache-dir pyspark==3.1.2
+
 #RUN mkdir -p /home/jovyan
 #RUN useradd jovyan && chown jovyan:jovyan /home/jovyan
 #USER jovyan
@@ -24,13 +26,12 @@ ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
 ENV MLFLOW_TRACKING_URI postgresql+psycopg2://postgres:password@172.17.0.2:5432
 ENV MLFLOW_ARTIFACT_STORE s3://mlruns
 
-RUN mkdir -p /home/jovyan/work/notebooks \
-    && mkdir -p /home/jovyan/work/notebooks/custom_data_transformers \
-    && mkdir -p /home/jovyan/work/dataset
-COPY notebooks/*.ipynb /home/jovyan/work/notebooks/
-COPY notebooks/custom_data_transformers/*.* /home/jovyan/work/notebooks/custom_data_transformers
-COPY notebooks/dataset/* /home/jovyan/work/dataset/
+COPY notebooks/ /home/jovyan/work/notebooks/
+COPY dataset/ /home/jovyan/work/dataset/
+USER root
+RUN chown jovyan /home/jovyan/work/*
 WORKDIR /home/jovyan/work
+USER jovyan
 
 ENV PORT 8000
 EXPOSE ${PORT}
