@@ -96,11 +96,11 @@ If you want to quickly get the environment up without getting into the details, 
 
 # Issues with MLFlow
 ### Model Serving
-1. The batch size that the serving model can accept seems to be very small. For eg with the credit card prediction example, a maximum batch size of 80 is allowed. Goiing beyond that results in error. So a large set of data needs to be send in very small batches for prediction. This has a huge negative impact on the performance.
-2. I do not know how does the model serving scale with load when it is deployed on, for eg., a kubernetes cluster
-3. Community edition does not have any user managment and security feature
+1. Community edition does not have any user managment and security feature
+2. If the developement environment is seperate from the production environment, how to deploy the model artifacts and the metadata from developement to production?
+ 
+:point_right:The above issues make MLFlow practically limited to internal developement enviornment only. **It cannot be used in any real production usecase.**:hurtrealbad:
 
-:boom:All the above issues make MLFlow practically a **NO GO**:point_left: solution.:hurtrealbad:
 ### Model Training
 1. It is possible to create replicable training pipeline flows using MLFlow Projects but this requires one to learn the MLflow Project DSL and also a good knowledge of MLFlow APIs to write the code. For eg, refer https://github.com/mlflow/mlflow/tree/master/examples/multistep_workflow
  
