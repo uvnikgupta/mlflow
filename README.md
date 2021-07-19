@@ -1,4 +1,27 @@
-# To run MLFlow follow the below steps:
+# Pre requisites for running on PC
+1. Windows 10 PC
+2. Docker Desktop up and running with minimum 6 vcores and 6GB RAM
+3. Docker Desktop Kubernetes engine up and running
+
+# TLDR;
+If you want to quickly get the environment up without getting into the details, do the following:
+1. Clone this git repo
+3. cd to dockerfiles folder and execute <code>docker_build.bat</code>
+4. cd to k8s folder and execute <code>start_platform.bat</code>
+5. Various services are started at the the following ports
+	<ul>
+		<li>MLFlow UI : <code>http://localhost:30005</code></li>
+		<li>Minio UI : <code>http://localhost:30009</code></li>
+		<li>Postgres : <code>http://localhost:32345</code></li>
+		<li>Jupyter notebook : <code>http://localhost:30008</code></li>
+	</ul>
+6. Connect to the Jupyter notebook, Select any of the notebooks, for eg "simple_pipeline.ipynb" and run all cells
+7. Connect to the MLFlow UI. Select the simple_pipeline experiment and click on the pyfunc run. Then Register it with the name <code>linreg</code> and promote it to <code>Staging</code>
+8. From the command prompt under the k8s folder excute <code>restart_linreg.bat</code>. This will start serving the promoted model
+9. To check the prediction you can use the client under the <code>client</code> folder by installing the requirements.txt and then executing <code>streamlit run client.py</code>
+
+
+# Details
 1. Clone this get repo
 2. Download Kaggle Credit card fraud dataset from https://www.kaggle.com/mlg-ulb/creditcardfraud and put it under <code>./dataset</code>
 3. Install Docker Desktop and enable Kubernetes from settings
