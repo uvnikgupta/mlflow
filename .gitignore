@@ -1,6 +1,6 @@
 __pycache__/
 .ipynb_checkpoints/
-dataset/
 mlruns/
 db/
+*.tgz
 *.pkl
