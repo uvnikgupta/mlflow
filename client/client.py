@@ -12,7 +12,8 @@ URL = os.environ.get('PREDICTION_URL', "http://127.0.0.1:31236/invocations")
 HEADERS = ""
 
 _PREDICTIONTYPE = {
-    1: ['Linear Regression', 'LinReg'],
+    1: ['Regression', 'reg'],
+    2: ['Classification', 'clf'],
 }
 
 
@@ -23,30 +24,6 @@ PredictionType = Enum(
         )
 )
 
-@st.cache
-def load_data(file_path):
-    df = pd.read_csv(file_path)
-    return df
-
-
-def do_prediction(file_path):
-    housing = load_data(file_path)
-    targetCol = "median_house_value"
-    catCols = ["ocean_proximity"]
-    numCols = ["housing_median_age", "total_rooms", "total_bedrooms", "population", 
-               "households", "median_income"]
-    x = housing[numCols + catCols]
-    y = housing[targetCol]
-    batch_size = 80
-    input_json = x[:batch_size].to_json(orient="split")
-    input_json = json.loads(input_json)
-
-    r = requests.post(URL, json = input_json, headers=HEADERS)
-    output = r.text
-    predictions = np.array(json.loads(output)).reshape(-1,1)
-    rmse = np.sqrt(mean_squared_error(y[:batch_size], predictions))
-    return np.round(rmse, 2)
-    
 
 def local_css(file_name):
     with open(file_name) as f:
@@ -83,17 +60,48 @@ def build_display():
         return PredictionType(ptype)
 
 
+@st.cache
+def load_data(file_path):
+    df = pd.read_csv(file_path)
+    return df
+
+
+def do_regression(file_path):
+    housing = load_data(file_path)
+    targetCol = "median_house_value"
+    catCols = ["ocean_proximity"]
+    numCols = ["housing_median_age", "total_rooms", "total_bedrooms", "population", 
+               "households", "median_income"]
+    x = housing[numCols + catCols]
+    y = housing[targetCol]
+    batch_size = 80
+    input_json = x[:batch_size].to_json(orient="split")
+    input_json = json.loads(input_json)
+
+    r = requests.post(URL, json = input_json, headers=HEADERS)
+    output = r.text
+    predictions = np.array(json.loads(output)).reshape(-1,1)
+    rmse = np.sqrt(mean_squared_error(y[:batch_size], predictions))
+    return np.round(rmse, 2)
+    
+
+def do_classification(file_path):
+    return '<font color="red">Not implemented yet! Come back later.</font>'
+
+
 if __name__ == "__main__":
     local_css("style.css")
     remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
 
     file_path = "../dataset/housing.csv"
-    predict = build_display()
-    text, rmse, _ = st.beta_columns([1, 1, 5])
-    with text:
-        st.markdown('**RMSE :** ')
-
-    if predict:
-        rmse.write(do_prediction(file_path))
+    ptype = build_display()
+    text, _, rmse, _ = st.beta_columns([1, 1, 6, 2])
+    if ptype == PredictionType.reg:
+        text.markdown('**RMSE :** ')   
+        rmse.write(do_regression(file_path))
+    elif ptype == PredictionType.clf:
+        text.markdown(" ")   
+        rmse.write(do_classification(file_path), unsafe_allow_html=True)
     else:
+        text.markdown(" ")   
         rmse.write(" ")
