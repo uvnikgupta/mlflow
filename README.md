@@ -1,5 +1,5 @@
 # Pre requisites for running on PC
-1. Windows 10 PC
+1. Windows 10 PC (could run on Mac but I have not tested it!)
 2. Docker Desktop up and running with minimum 6 vcores and 6GB RAM
 3. Docker Desktop Kubernetes engine up and running
 
