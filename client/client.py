@@ -52,7 +52,7 @@ def build_display():
         st.markdown("  ")
         st.markdown("**Prediction Type** : ")
     with cb:
-        ptype = st.selectbox("", ptype, format_func=get_pred_str, key=1)
+        ptype = st.selectbox("", ptype, format_func=get_pred_str)
     with bt:
         st.markdown("  ")
         predict = st.button("Predict",)
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     local_css("style.css")
     remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
 
-    file_path = "../dataset/housing.csv"
+    file_path = "dataset/housing.csv"
     ptype = build_display()
     text, _, rmse, _ = st.beta_columns([1, 1, 6, 2])
     if ptype == PredictionType.reg:
