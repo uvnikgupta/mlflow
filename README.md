@@ -15,8 +15,8 @@ If you want to quickly get the environment up without getting into the details, 
 		<li>Postgres : <code>http://localhost:32345</code></li>
 		<li>Jupyter notebook : <code>http://localhost:30008</code></li>
 	</ul>
-6. Connect to the Jupyter notebook, Select any of the notebooks, for eg "simple_pipeline.ipynb" and run all cells
-7. Connect to the MLFlow UI. Select the simple_pipeline experiment and click on the pyfunc run. Then Register it with the name <code>linreg</code> and promote it to <code>Staging</code>
+6. Connect to the Jupyter notebook server @ <code>http://localhost:30008</code>. Select any of the notebooks, for eg "simple_pipeline.ipynb" and run all cells
+7. Connect to the MLFlow UI @ <code>http://localhost:30005</code>. Select the simple_pipeline experiment and click on the pyfunc run. Then Register it with the name <code>linreg</code> and promote it to <code>Staging</code>
 8. From the command prompt under the k8s folder excute <code>restart_linreg.bat</code>. This will start serving the promoted model
 9. To check the prediction you can use the client under the <code>client</code> folder by installing the requirements.txt and then executing <code>streamlit run client.py</code>
 
