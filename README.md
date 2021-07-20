@@ -51,10 +51,10 @@ If you want to quickly get the environment up without getting into the details, 
 4. <code>docker run -d --rm -p 5000:5000 --name mlflow_server mlflow_server</code><br>
 5. Logon to minio UI (http://localhost:9000) and add a bucket named <code>mlruns</code>
 6. Logon to MLFlow UI using http://localhost:5000
-7. Run the <code>mlflow_sk.pynb</code> for sklearn LogisticRegression Model
+7. Run the <code>practice_code/mlflow_sk.pynb</code> for sklearn LogisticRegression Model
 8. Use the MLFlow UI to register one of the models as "logreg" and promote it to "Staging"
 9. <code>docker run -d --rm -p 1235:1235 --name mlflow_logreg_infer mlflow_logreg_infer</code> to start model serving<br>
-10. Change the port in <code>mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
+10. Change the port in <code>practice_code/mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
 
 ### Kubernetes environment
 1. Set the following environment variables:<br>
@@ -67,9 +67,9 @@ If you want to quickly get the environment up without getting into the details, 
 3. Logon to minio UI (http://localhost:30009) and add a bucket named <code>mlruns</code>
 4. Logon to MLFlow UI using http://localhost:30005
 5. Open pgAdmin and connect to the postgres server running in kubernetes (host=localhost, port=32345)
-6. Run the <code>mlflow_sk.pynb</code> for sklearn LogisticRegression Model
+6. Run the <code>practice_code/mlflow_sk.pynb</code> for sklearn LogisticRegression Model
 7. Use the MLFlow UI to register one of the models as "logreg" and promote it to "Staging"
-8. Change the port in <code>mlflow_serving.ipynb</code> to <code>31235</code> and run it. Check the returned inference values
+8. Change the port in <code>practice_code/mlflow_serving.ipynb</code> to <code>31235</code> and run it. Check the returned inference values
 
 ### Local Environment
 1. Install sqlite3 if it does not already exist (Normally this comes by default with Python installation)
@@ -79,10 +79,10 @@ If you want to quickly get the environment up without getting into the details, 
 		<code>MLFLOW_ARTIFACT_STORE=file:/[Path/to/local/folder]</code>
 4. Run <code>mlflow ui --backend-store-uri  %MLFLOW_TRACKING_URI%</code> OR <code>mlflow server --backend-store-uri  %MLFLOW_TRACKING_URI% --default-artifact-root %MLFLOW_ARTIFACT_STORE%</code> to start the MLFlow server
 5. Logon to MLFlow UI using http://localhost:5000
-5. Run the <code>mlflow_sk.pynb</code> for sklearn LogisticRegression Model
+5. Run the <code>practice_code/mlflow_sk.pynb</code> for sklearn LogisticRegression Model
 6. Use the MLFlow UI to register one of the models as "logreg" and promote it to "Staging"
 7. Run <code>mlflow models serve --model-uri models:/logreg/Staging -p 1235</code> to start serving the model
-8. Change the port in <code>mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
+8. Change the port in <code>practice_code/mlflow_serving.ipynb</code> to <code>1235</code> and run it. Check the returned inference values
 
 ### Further trials
 1. Try to serve the Tensorflow model for MNIST dataset in mlflow_tf.ipynb
