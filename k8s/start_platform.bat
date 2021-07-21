@@ -6,3 +6,7 @@ kubectl apply -f mlflow_server.yml
 @echo on
 kubectl apply -f minioclient_job.yml
 kubectl apply -f mltoolkit_dep.yml
+@echo off
+@timeout /t 120 /nobreak
+@echo on
+kubectl apply -f mlflow_linreg_inference_dep.yml

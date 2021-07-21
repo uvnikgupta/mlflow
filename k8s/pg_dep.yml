@@ -14,6 +14,7 @@ spec:
       containers:
       - name: postgres
         image: postgres
+        imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_PASSWORD
           value: password

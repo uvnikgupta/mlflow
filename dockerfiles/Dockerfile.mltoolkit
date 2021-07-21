@@ -28,6 +28,8 @@ ENV MLFLOW_ARTIFACT_STORE s3://mlruns
 
 COPY notebooks/ /home/jovyan/work/notebooks/
 COPY dataset/ /home/jovyan/work/dataset/
+COPY scripts/*housing.py /home/jovyan/work/
+COPY notebooks/custom_data_transformers/ /home/jovyan/work/custom_data_transformers/
 USER root
 RUN chown jovyan /home/jovyan/work/*
 WORKDIR /home/jovyan/work
@@ -61,4 +63,7 @@ CMD ["/bin/sh", "-c", "git init \
                     && git commit -m 'data : remove first 1000 lines' \
                     && git tag -a 'v2' -m 'removed 1000 lines' \
                     && dvc push \
+                    && python tf_housing.py \
+                    && python sk_housing.py \
+                    && python custom_housing.py \
                     && jupyter-notebook --ip='*' --port=${PORT} --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
