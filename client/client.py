@@ -6,23 +6,24 @@ from enum import Enum
 import itertools
 import requests
 import streamlit as st
+import mlflow
+from mlflow.tracking import MlflowClient
 from sklearn.metrics import mean_squared_error
 
 URL = os.environ.get('PREDICTION_URL', "http://127.0.0.1:31236/invocations")
 HEADERS = ""
 
-_PREDICTIONTYPE = {
-    1: ['Regression', 'reg'],
-    2: ['Classification', 'clf'],
-}
+mlflow.set_tracking_uri(os.environ.get('MLFLOW_TRACKING_URI', 
+                                    'postgresql+psycopg2://postgres:password@localhost:32345'))
+client = MlflowClient()
 
+prediction_types = [
+    { 'type': 'Regression', 'registered_as': 'linreg'},
+    { 'type': 'Classification', 'registered_as': 'clf'}
+]
 
-PredictionType = Enum(
-    value='PredictionTypes',
-    names=itertools.chain.from_iterable(
-            itertools.product(v, [k]) for k, v in _PREDICTIONTYPE.items()
-        )
-)
+prediction_types = pd.DataFrame(prediction_types)
+prediction_types.index += 1
 
 
 def local_css(file_name):
@@ -39,12 +40,11 @@ def icon(icon_name):
 
 
 def get_pred_str(selection):
-    return PredictionType(selection).name
+    return prediction_types.loc[selection]['type']
 
 
 def build_display():
     st.markdown("## Prediction Testing Client")
-    ptype = tuple([ptype.value for ptype in PredictionType])
     
     text, cb, _, bt = st.beta_columns([3, 6, 1, 4])
     with text:
@@ -52,12 +52,12 @@ def build_display():
         st.markdown("  ")
         st.markdown("**Prediction Type** : ")
     with cb:
-        ptype = st.selectbox("", ptype, format_func=get_pred_str)
+        ptype = st.selectbox("", prediction_types.reset_index(), format_func=get_pred_str)
     with bt:
         st.markdown("  ")
         predict = st.button("Predict",)
     if predict:
-        return PredictionType(ptype)
+        return prediction_types.loc[ptype]['registered_as']
 
 
 @st.cache
@@ -96,10 +96,10 @@ if __name__ == "__main__":
     file_path = "dataset/housing.csv"
     ptype = build_display()
     text, _, rmse, _ = st.beta_columns([1, 1, 6, 2])
-    if ptype == PredictionType.reg:
+    if ptype == 'linreg':
         text.markdown('**RMSE :** ')   
         rmse.write(do_regression(file_path))
-    elif ptype == PredictionType.clf:
+    elif ptype == 'clf':
         text.markdown(" ")   
         rmse.write(do_classification(file_path), unsafe_allow_html=True)
     else:
