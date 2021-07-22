@@ -3,14 +3,15 @@ body {
     background-color: #4F8BF9;
 }
 
-.stButton>button {
+.stButton>button:first-child {
     color:black;
-    border-radius: 100%;
-    height: 4em;
+    background-color:greenyellow;
+    /* border-radius: 100%; */
+    height: 3.8em;
     width: 5em;
 }
 
-.streamlit-button.primary-button {
+/* .streamlit-button.primary-button {
     background-color:greenyellow;
     border-color:forestgreen;
-}
+} */
