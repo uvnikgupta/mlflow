@@ -13,7 +13,7 @@ URL = os.environ.get('PREDICTION_URL', "http://127.0.0.1:31236/invocations")
 HEADERS = ""
 
 prediction_types = None
-registered_models = pd.DataFrame(columns=['source', 'version', 'stage'])
+registered_models = pd.DataFrame(columns=['source', 'version', 'stage', 'name'])
     
 mlflow.set_tracking_uri(os.environ.get('MLFLOW_TRACKING_URI', 
                                     'postgresql+psycopg2://postgres:password@localhost:32345'))
@@ -30,29 +30,6 @@ def remote_css(url):
 
 def icon(icon_name):
     st.markdown(f'<i class="material-icons">{icon_name}</i>', unsafe_allow_html=True)
-
-
-def activate_model(model, name):
-    cond = 'stage == "Staging"'
-    active_version = registered_models.query(cond)['version'].iloc[0]
-    client.transition_model_version_stage(
-                name = name,
-                version = int(active_version),
-                stage="Archived"
-        )
-
-    client.transition_model_version_stage(
-                name = name,
-                version = int(model),
-                stage="Staging"
-        )
-    
-    subprocess.run(["kubectl", "delete", "-f", "..\\k8s\\mlflow_linreg_inference_dep.yml"], 
-                    stdout=subprocess.PIPE, encoding='utf-8')
-    subprocess.run(["kubectl", "apply", "-f", "..\\k8s\\mlflow_linreg_inference_dep.yml"], 
-                    stdout=subprocess.PIPE, encoding='utf-8')
-    subprocess.run(["timeout", "50"], 
-                    stdout=subprocess.PIPE, encoding='utf-8')
 
 
 def init_prediction_types():
@@ -74,23 +51,69 @@ def get_model_str(selection):
     return registered_models.loc[selection]['source'] + " : ver. " + str(registered_models.loc[selection]['version'])
 
 
-def init_registered_models(name):
-    global registered_models
-    registered_models = registered_models[0:0]
-    for mv in client.search_model_versions(f"name='{name}'"):
-        mv = dict(mv)
-        data = {'source': mv['source'].split('/')[-1], 
-                'version': mv['version'], 
-                'stage': mv['current_stage']
-            }
-        registered_models = registered_models.append(data, ignore_index = True)
-        
-    registered_models.index += 1
-
-
 def build_sidebar():
     ptype = st.sidebar.selectbox("Prediction Type:", prediction_types.reset_index(), format_func=get_pred_str)
     return prediction_types.loc[ptype]['registered_as']
+
+
+def init_registered_models(basename):
+    global registered_models
+    registered_models = registered_models[0:0]
+    names = []
+
+    for rm in client.list_registered_models():
+        reg_name = dict(dict(rm)['latest_versions'][0])['name']
+        if basename in reg_name:
+            names.append(reg_name)
+
+    for name in names:        
+        for mv in client.search_model_versions(f"name='{name}'"):
+            mv = dict(mv)
+            data = {'source': mv['source'].split('/')[-1], 
+                    'version': mv['version'], 
+                    'stage': mv['current_stage'],
+                    'name': name
+                }
+            registered_models = registered_models.append(data, ignore_index = True)
+            
+        registered_models.index += 1
+
+
+def get_deployment_yaml(name):
+    prefix = '..\\k8s\\mlflow_'
+    postfix = '_inference_dep.yml'
+    parts = name.split('-')
+    if len(parts) == 1:
+        dep_name = prefix + parts[0] + postfix
+    else:
+        dep_name = prefix + parts[0] + "_" + parts[1][:2] + postfix
+    return dep_name
+
+
+def activate_model(model):
+    name = registered_models.loc[model]['name']
+    cond = '(stage == "Staging") and (name == @name)'
+    current_version = registered_models.query(cond)['version'].iloc[0]
+    new_version = registered_models.loc[model]['version']
+    client.transition_model_version_stage(
+                name = name,
+                version = int(current_version),
+                stage="Archived"
+        )
+
+    client.transition_model_version_stage(
+                name = name,
+                version = int(new_version),
+                stage="Staging"
+        )
+    
+    dep_yml = get_deployment_yaml(name)
+    subprocess.run(["kubectl", "delete", "-f", dep_yml], 
+                    stdout=subprocess.PIPE, encoding='utf-8')
+    subprocess.run(["kubectl", "apply", "-f", dep_yml], 
+                    stdout=subprocess.PIPE, encoding='utf-8')
+    subprocess.run(["timeout", "50"], 
+                    stdout=subprocess.PIPE, encoding='utf-8')
 
 
 def build_available_models_display(ptype):
@@ -107,32 +130,7 @@ def build_available_models_display(ptype):
         st.markdown("  ")
         activate = st.button("Activate", key="1")
     if activate:
-        activate_model(model, ptype)
-
-
-def build_active_model_display():
-    cond = 'stage == "Staging"'
-    try:
-        version = registered_models.query(cond)['version'].iloc[0]
-        source = registered_models.query(cond)['source'].iloc[0]
-        text, model, bt = st.beta_columns([1.8, 4, 2.6])
-        with text:
-            st.markdown("  ")
-            st.markdown("  ")
-            text.markdown("**Active Model**:")
-        with model:
-            st.markdown("  ")
-            st.markdown("  ")
-            model.markdown(source + " : ver. " + str(version))
-        with bt:
-            st.write("  ")
-            predict = bt.button("Predict")
-        return predict
-    except:
-        msg = '<font color="red">Not implemented yet! Come back later.</font>'
-        _, text = st.beta_columns([1.1, 4])
-        text.write(msg, unsafe_allow_html=True)
-        return False
+        activate_model(model)
 
 
 def build_display():
@@ -141,6 +139,35 @@ def build_display():
     st.markdown("## Prediction Testing Client")
     build_available_models_display(ptype)
     return ptype
+
+
+def build_active_model_display():
+    active_models = ''
+    cond = 'stage == "Staging"'
+    if len(registered_models) > 0:
+        for _, row in registered_models.query(cond).iterrows():
+            version = row['version']
+            source = row['source']
+            active_models += source + " : ver. " + str(version) + ", "
+        active_models = active_models[:-2]
+        
+        text, model, bt = st.beta_columns([1.8, 4, 2.6])
+        with text:
+            st.markdown("  ")
+            st.markdown("  ")
+            text.markdown("**Active Models**:")
+        with model:
+            st.markdown("  ")
+            model.markdown(active_models)
+        with bt:
+            st.write("  ")
+            predict = bt.button("Predict")
+        return predict
+    else:
+        msg = '<font color="red">Not implemented yet! Come back later.</font>'
+        _, text = st.beta_columns([1.1, 4])
+        text.write(msg, unsafe_allow_html=True)
+        return False
 
 
 @st.cache
