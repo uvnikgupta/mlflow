@@ -12,8 +12,8 @@ spec:
         app: mlflow-ligreg-infer
     spec:
       containers:
-      - name: mlflow-ligreg-infer
-        image: mlflow_linreg_infer
+      - name: mlflow-ligreg-infer-v1
+        image: mlflow_linreg_infer:1.0
         imagePullPolicy: Never
         env:
           - name: AWS_ACCESS_KEY_ID 

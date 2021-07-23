@@ -19,6 +19,9 @@ spec:
         - name: POSTGRES_PASSWORD
           value: password
         resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
           limits:
             memory: "152Mi"
             cpu: "500m"

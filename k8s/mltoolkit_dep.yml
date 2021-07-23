@@ -27,6 +27,9 @@ spec:
           - name: MLFLOW_ARTIFACT_STORE 
             value: s3://mlruns
         resources:
+          requests:
+            memory: "1500Mi"
+            cpu: "1000m"
           limits:
             memory: "2Gi"
             cpu: "1000m"

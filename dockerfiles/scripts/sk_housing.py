@@ -12,6 +12,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 
 import mlflow
+from mlflow.tracking import MlflowClient
 from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import Schema, ColSpec
 import dvc.api
@@ -111,7 +112,7 @@ def log_experiment(experiment_name, x, y, model, data_version, feature_names):
                                 python_model=ModelWrapper(), 
                                 artifacts=artifacts,
                                 signature=sign,
-                                registered_model_name='linreg')
+                                registered_model_name='linreg-v2.0')
         mlflow.shap.log_explanation(model.predict, 
                                 pd.DataFrame(data = x[:20], columns = feature_names))
         
@@ -147,4 +148,7 @@ if __name__ == "__main__":
         joblib.dump(model, model_path)
         joblib.dump(pipe, pipeline_path)
         log_experiment('sk_housing', x_transformed, y, model, v, feature_names)
+
+    client = MlflowClient()
+    client.transition_model_version_stage(name="linreg-v2.0", version=2, stage="Staging")
         

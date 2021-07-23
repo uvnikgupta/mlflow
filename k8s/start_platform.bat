@@ -10,3 +10,4 @@ kubectl apply -f mltoolkit_dep.yml
 @timeout /t 120 /nobreak
 @echo on
 kubectl apply -f mlflow_linreg_inference_dep.yml
+kubectl apply -f mlflow_linreg_v2_inference_dep.yml

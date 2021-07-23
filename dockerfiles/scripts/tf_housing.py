@@ -158,6 +158,6 @@ if __name__ == "__main__":
         joblib.dump(pipe, pipeline_path)
         log_experiment('tf_housing', x_transformed, y, model, v, feature_names)
         
-        client = MlflowClient()
-        client.transition_model_version_stage(name="linreg", version=1, stage="Staging")
+    client = MlflowClient()
+    client.transition_model_version_stage(name="linreg", version=1, stage="Staging")
 
