@@ -12,6 +12,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 
 import mlflow
+from mlflow.models.signature import ModelSignature
+from mlflow.types.schema import Schema, ColSpec
 import dvc.api
 
 backend_uri = os.environ['MLFLOW_TRACKING_URI']
@@ -75,7 +77,18 @@ def get_trained_model(x, y):
     model.fit(x, y)
     return model
 
-def log_experiment(experiment_name, x, y, model, data_version):
+def get_model_signature(numCols, catCols):
+    input_schema = []
+    for col in numCols:
+        input_schema.append(ColSpec("double", col))
+    for col in catCols:
+        input_schema.append(ColSpec("string", col))
+    input_schema = Schema(input_schema)
+    output_schema = Schema([ColSpec('double')])
+    signature = ModelSignature(inputs=input_schema, outputs=output_schema)
+    return signature
+
+def log_experiment(experiment_name, x, y, model, data_version, feature_names):
     experiment = mlflow.get_experiment_by_name(experiment_name)
     if experiment is None:
         experiment_id = mlflow.create_experiment(experiment_name, artifact_location=artifact_uri)
@@ -97,7 +110,10 @@ def log_experiment(experiment_name, x, y, model, data_version):
         mlflow.pyfunc.log_model(mlflow_pyfunc_model_path, 
                                 python_model=ModelWrapper(), 
                                 artifacts=artifacts,
+                                signature=sign,
                                 registered_model_name='linreg')
+        mlflow.shap.log_explanation(model.predict, 
+                                pd.DataFrame(data = x[:20], columns = feature_names))
         
     mlflow.end_run()
 
@@ -123,8 +139,12 @@ if __name__ == "__main__":
         pipe = get_pipeline(catCols, numCols).fit(x)
         x_transformed = pipe.transform(x)
         model = get_trained_model(x_transformed, y)
+        sign = get_model_signature(numCols, catCols)
+
+        categories = list(pipe.named_transformers_['OneHot'].categories_[0])
+        feature_names = numCols + categories
 
         joblib.dump(model, model_path)
         joblib.dump(pipe, pipeline_path)
-        log_experiment('sk_housing', x_transformed, y, model, v)
+        log_experiment('sk_housing', x_transformed, y, model, v, feature_names)
         

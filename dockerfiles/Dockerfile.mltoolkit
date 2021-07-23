@@ -16,6 +16,11 @@ RUN pip install -U --no-cache-dir dvc[s3] \
 
 RUN pip install -U --no-cache-dir pyspark==3.1.2
 
+USER root
+RUN apt-get update -y && apt-get install g++ -y
+RUN pip install shap
+USER jovyan
+
 #RUN mkdir -p /home/jovyan
 #RUN useradd jovyan && chown jovyan:jovyan /home/jovyan
 #USER jovyan
@@ -63,7 +68,5 @@ CMD ["/bin/sh", "-c", "git init \
                     && git commit -m 'data : remove first 1000 lines' \
                     && git tag -a 'v2' -m 'removed 1000 lines' \
                     && dvc push \
-                    && python tf_housing.py \
-                    && python sk_housing.py \
-                    && python custom_housing.py \
-                    && jupyter-notebook --ip='*' --port=${PORT} --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
+                    && { python tf_housing.py && python sk_housing.py && python custom_housing.py; } & \
+                    jupyter-notebook --ip='*' --port=${PORT} --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
