@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlflow-linreg-v2-infer
+  name: mlflow-regres-v2-infer
 spec:
   selector:
     matchLabels:
-      app: mlflow-linreg-infer
+      app: mlflow-regres-infer
   template:
     metadata:
       labels:
-        app: mlflow-linreg-infer
+        app: mlflow-regres-infer
     spec:
       containers:
-      - name: mlflow-linreg-infer-v2
-        image: mlflow_linreg_infer:2.0
+      - name: mlflow-regres-infer-v2
+        image: mlflow_regres_infer:2.0
         imagePullPolicy: Never
         env:
           - name: AWS_ACCESS_KEY_ID 
@@ -27,7 +27,7 @@ spec:
           - name: MLFLOW_ARTIFACT_STORE 
             value: s3://mlruns
           - name: MODEL 
-            value: linreg-v2.0
+            value: regres-v2.0
           - name: VERSION 
             value: Staging
         resources:

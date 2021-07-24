@@ -118,7 +118,7 @@ def log_experiment(experiment_name, x, y, model, data_version, sign, feature_nam
                                 python_model=ModelWrapper(), 
                                 artifacts=artifacts,
                                 signature=sign,
-                                registered_model_name='linreg')
+                                registered_model_name='regres')
         mlflow.shap.log_explanation(model.predict, 
                                 pd.DataFrame(data = x[:20], columns = feature_names))
         

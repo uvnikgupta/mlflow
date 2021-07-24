@@ -57,7 +57,7 @@ def change_canary_status(status, ptype):
 def init_prediction_types():
     global prediction_types
     prediction_types = [
-        { 'type': 'Regression', 'registered_as': 'linreg'},
+        { 'type': 'Regression', 'registered_as': 'regres'},
         { 'type': 'Classification', 'registered_as': 'clf'}
     ]
 
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     predict = build_active_model_display(ptype)
     if predict:
         text, _, rmse, _ = st.beta_columns([1, 1, 6, 2])
-        if ptype == 'linreg':
+        if ptype == 'regres':
             text.markdown('**RMSE :** ')   
             rmse.write(do_regression(file_path))
         elif ptype == 'clf':

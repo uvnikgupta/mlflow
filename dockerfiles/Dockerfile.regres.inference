@@ -25,7 +25,7 @@ ENV MLFLOW_S3_ENDPOINT_URL http://172.17.0.4:9000
 ENV MLFLOW_TRACKING_URI postgresql+psycopg2://postgres:password@172.17.0.2:5432
 ENV MLFLOW_ARTIFACT_STORE s3://mlruns
 
-ENV MODEL linreg-v2.0
+ENV MODEL regres
 ENV VERSION Staging
 ENV PORT 1236
 
