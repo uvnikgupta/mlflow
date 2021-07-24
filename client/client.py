@@ -182,7 +182,6 @@ def build_active_model_display(ptype):
     active_models = ''
     cond = 'stage == "Staging"'
     if len(registered_models) > 0:
-        build_canary_display(ptype)
         for _, row in registered_models.query(cond).iterrows():
             version = row['version']
             source = row['source']
@@ -200,6 +199,7 @@ def build_active_model_display(ptype):
         with bt:
             st.write("  ")
             predict = bt.button("Predict")
+        build_canary_display(ptype)
         return predict
     else:
         msg = '<font color="red">Not implemented yet! Come back later.</font>'
