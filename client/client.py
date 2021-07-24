@@ -33,8 +33,9 @@ def icon(icon_name):
     st.markdown(f'<i class="material-icons">{icon_name}</i>', unsafe_allow_html=True)
 
 
-def is_canary_on():
-    cmd = "kubectl describe svc mlflow-ligreg-infer | findstr Endpoints"
+def is_canary_on(ptype):
+    svc = "mlflow-" + ptype + "-infer"
+    cmd = "kubectl describe svc " + svc + " | findstr Endpoints"
     ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT, encoding='utf-8')
     output = ps.communicate()[0]
@@ -43,14 +44,14 @@ def is_canary_on():
     return False
 
 
-def change_canary_status(status):
+def change_canary_status(status, ptype):
+    dep_yaml = "..\\k8s\\mlflow_" + ptype + "_v2_inference_dep.yml"
     if status == "Off":
-        subprocess.run(["kubectl", "delete", "-f", "..\\k8s\\mlflow_linreg_v2_inference_dep.yml"], 
+        subprocess.run(["kubectl", "delete", "-f", dep_yaml], 
                     stdout=subprocess.PIPE, encoding='utf-8')
     else:
-        out = subprocess.run(["kubectl", "apply", "-f", 
-                              "..\\k8s\\mlflow_linreg_v2_inference_dep.yml"], 
-                            stdout=subprocess.PIPE, encoding='utf-8')
+        out = subprocess.run(["kubectl", "apply", "-f", dep_yaml], 
+                             stdout=subprocess.PIPE, encoding='utf-8')
 
 
 def init_prediction_types():
@@ -162,10 +163,26 @@ def build_display():
     return ptype
 
 
-def build_active_model_display():
+def build_canary_display(ptype):
+    global slide
+    text, slide, _ = st.beta_columns([1, 2, 1])
+    with text:
+        st.markdown(" ")
+        st.markdown(" ")
+        text.markdown("**Canary:**")
+    
+    status = "On" if is_canary_on(ptype) else "Off"
+    new_status = slide.select_slider("", ["On", "Off"], value = status)
+    print(status, new_status)
+    if new_status != status:
+        change_canary_status(new_status, ptype)
+
+
+def build_active_model_display(ptype):
     active_models = ''
     cond = 'stage == "Staging"'
     if len(registered_models) > 0:
+        build_canary_display(ptype)
         for _, row in registered_models.query(cond).iterrows():
             version = row['version']
             source = row['source']
@@ -189,21 +206,6 @@ def build_active_model_display():
         _, text = st.beta_columns([1.1, 4])
         text.write(msg, unsafe_allow_html=True)
         return False
-
-
-def build_canary_display():
-    global slide
-    text, slide, _ = st.beta_columns([1, 2, 1])
-    with text:
-        st.markdown(" ")
-        st.markdown(" ")
-        text.markdown("**Canary:**")
-    
-    status = "On" if is_canary_on() else "Off"
-    new_status = slide.select_slider("", ["On", "Off"], value = status)
-    print(status, new_status)
-    if new_status != status:
-        change_canary_status(new_status)
 
 
 @st.cache
@@ -242,8 +244,7 @@ if __name__ == "__main__":
 
     file_path = "dataset/housing.csv"
     ptype = build_display()
-    predict = build_active_model_display()
-    build_canary_display()
+    predict = build_active_model_display(ptype)
     if predict:
         text, _, rmse, _ = st.beta_columns([1, 1, 6, 2])
         if ptype == 'linreg':

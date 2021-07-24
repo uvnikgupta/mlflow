@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlflow-ligreg-v2-infer
+  name: mlflow-linreg-v2-infer
 spec:
   selector:
     matchLabels:
-      app: mlflow-ligreg-infer
+      app: mlflow-linreg-infer
   template:
     metadata:
       labels:
-        app: mlflow-ligreg-infer
+        app: mlflow-linreg-infer
     spec:
       containers:
-      - name: mlflow-ligreg-infer-v2
+      - name: mlflow-linreg-infer-v2
         image: mlflow_linreg_infer:2.0
         imagePullPolicy: Never
         env:

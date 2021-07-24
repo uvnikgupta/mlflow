@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlflow-ligreg-infer
+  name: mlflow-linreg-infer
 spec:
   selector:
     matchLabels:
-      app: mlflow-ligreg-infer
+      app: mlflow-linreg-infer
   template:
     metadata:
       labels:
-        app: mlflow-ligreg-infer
+        app: mlflow-linreg-infer
     spec:
       containers:
-      - name: mlflow-ligreg-infer-v1
+      - name: mlflow-linreg-infer-v1
         image: mlflow_linreg_infer:1.0
         imagePullPolicy: Never
         env:
@@ -42,11 +42,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mlflow-ligreg-infer
+  name: mlflow-linreg-infer
 spec:
   type: NodePort
   selector:
-    app: mlflow-ligreg-infer
+    app: mlflow-linreg-infer
   ports:
   - port: 1236
     targetPort: 1236
