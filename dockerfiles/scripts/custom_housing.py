@@ -103,7 +103,7 @@ def log_experiment(experiment_name, x, y, model, data_version, sign, feature_nam
 
     mlflow.set_experiment(experiment.name)
 
-    mlflow_pyfunc_model_path = "mlflow_" + experiment_name
+    mlflow_pyfunc_model_path = experiment_name
     with mlflow.start_run():
         mlflow.log_param('data_url', data_url)
         mlflow.log_param('data_version', data_version)
@@ -154,4 +154,4 @@ if __name__ == "__main__":
 
         joblib.dump(model, model_path)
         joblib.dump(pipe, pipeline_path)
-        log_experiment('custom_housing', x_transformed, y, model, v, sign, feature_names)
+        log_experiment('regres_custom_housing', x_transformed, y, model, v, sign, feature_names)

@@ -97,7 +97,7 @@ def log_experiment(experiment_name, x, y, model, data_version, feature_names):
 
     mlflow.set_experiment(experiment.name)
 
-    mlflow_pyfunc_model_path = "mlflow_" + experiment_name
+    mlflow_pyfunc_model_path = experiment_name
     with mlflow.start_run():
         mlflow.log_param('data_url', data_url)
         mlflow.log_param('data_version', data_version)
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
         joblib.dump(model, model_path)
         joblib.dump(pipe, pipeline_path)
-        log_experiment('sk_housing', x_transformed, y, model, v, feature_names)
+        log_experiment('regres_sk_housing', x_transformed, y, model, v, feature_names)
 
     client = MlflowClient()
     client.transition_model_version_stage(name="regres-v2.0", version=2, stage="Staging")
