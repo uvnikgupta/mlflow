@@ -3,5 +3,6 @@ __pycache__/
 mlruns/
 db/
 .vscode/
+*_housing/
 *.tgz
 *.pkl
