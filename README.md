@@ -15,7 +15,7 @@ If you want to quickly get the environment up without getting into the details, 
 		<li>Postgres : <code>http://localhost:32345</code></li>
 		<li>Jupyter notebook : <code>http://localhost:30008</code></li>
 	</ul>
-6. Connect to the MLFlow UI @ <code>http://localhost:30005</code>. You can see that some experiments and runs are already logged and one of the runs is registered and promoted to <code>Staging</code>
+6. Connect to the MLFlow UI @ <code>http://localhost:30005</code>. You can see that experiments are getting logged. These are also getting registered and promoted to <code>Staging</code>
 7. To check the prediction you can use the client under the <code>client</code> folder by installing the requirements.txt and then executing <code>streamlit run client.py</code>
 
 
