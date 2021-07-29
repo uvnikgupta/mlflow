@@ -16,7 +16,7 @@ If you want to quickly get the environment up without getting into the details, 
 		<li>Jupyter notebook : <code>http://localhost:30008</code></li>
 	</ul>
 6. Connect to the MLFlow UI @ <code>http://localhost:30005</code>. You can see that experiments are getting logged. These are also getting registered and promoted to <code>Staging</code>. Finally 2 different versions of Regression models are promoted and served in Canary deployment mode.
-7. To check the prediction you can use the client under the <code>client</code> folder by installing the requirements.txt and then executing <code>streamlit run client.py. From this client UI you can also disable or enable the canary deployment</code>
+7. To check the prediction you can use the client under the <code>client</code> folder by installing the requirements.txt and then executing <code>streamlit run client.py</code>. From this client UI you can also disable or enable the canary deployment
 
 
 # Details
