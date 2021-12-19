@@ -1,3 +1,4 @@
+*Please leave a ⭐ if you like this repo. Also please provide your comments if you would like to see something added*
 # Pre requisites for running on PC
 1. Windows 10 PC (could run on Mac but I have not tested it!)
 2. Docker Desktop up and running with minimum 6 vcores and 6GB RAM
